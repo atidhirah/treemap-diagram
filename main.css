@@ -18,4 +18,31 @@ body {
   justify-content: center;
   align-items: center;
   padding: 1rem;
+  overflow-x: hidden;
+}
+
+#description {
+  margin-bottom: 1rem;
+}
+
+#canvas {
+  width: 1200px;
+  height: 500px;
+}
+
+.tile-text {
+  font-size: 0.5rem;
+}
+
+#tooltip {
+  background-color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 0.7em;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px 3px rgba(128, 128, 128, 0.5);
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
