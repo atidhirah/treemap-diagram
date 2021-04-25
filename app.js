@@ -26,6 +26,9 @@ const drawTreeMap = (data) => {
   const root = d3.hierarchy(data).sum((d) => d.value);
   d3.treemap().size([w, h]).padding(1)(root);
 
+  const categories = data.children.map((d) => d.name);
+  const color = d3.scaleOrdinal().domain(categories).range(d3.schemeSet3);
+
   // Create a cell
   const cell = svg
     .selectAll("g")
@@ -48,10 +51,10 @@ const drawTreeMap = (data) => {
       "data-name": (d) => d.data.name,
       "data-category": (d) => d.data.category,
       "data-value": (d) => d.data.value,
-      fill: "blue",
+      fill: (d) => color(d.data.category),
     })
     .on("mousemove", (e, d) => showTooltip(e, d))
-    .on("mouseout", hideTooltip());
+    .on("mouseout", () => hideTooltip());
 
   // Add text
   cell
@@ -65,6 +68,40 @@ const drawTreeMap = (data) => {
       x: 5,
       y: (d, i) => 16 + 10 * i,
     })
+    .text((d) => d);
+
+  // Add legend
+  drawLegend(categories, color);
+};
+
+const drawLegend = (categories, clrScale) => {
+  const legend = d3.select("#legend");
+  const lw = parseInt(legend.style("width"));
+  const lh = parseInt(legend.style("height"));
+  const columns = 3;
+  const rows = Math.ceil(categories.length / 2);
+
+  legendElem = legend
+    .selectAll("g")
+    .data(categories)
+    .enter()
+    .append("g")
+    .attr("transform", (d, i) => {
+      const x = ((i % columns) * lw) / columns;
+      const y = parseInt(i / columns) * (lh / rows);
+      return `translate(${x}, ${y})`;
+    });
+
+  legendElem.append("rect").attrs({
+    width: 15,
+    height: 15,
+    class: "legend-item",
+    fill: (d) => clrScale(d),
+  });
+
+  legendElem
+    .append("text")
+    .attrs({ class: "legend-text", x: 20, y: 13 })
     .text((d) => d);
 };
 
